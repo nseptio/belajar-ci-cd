@@ -30,6 +30,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
+          debug: true
           script: |
             cd ~/iss-be/
             if [ -f .env ]; then
