@@ -1,0 +1,15 @@
+services:
+  golang:
+    image: registry-pd.dikti.go.id/iss/iss-be:latest
+    # build: .
+    container_name: iss-be
+    env_file:
+      - .env
+    ports:
+      - "${SERVER_PORT:-8080}:${SERVER_PORT:-8080}" # Default to 8080 if SERVER_PORT is not set
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
