@@ -21,6 +21,7 @@ jobs:
           source: "docker-compose.yaml"
           target: "~/iss-be/"
           overwrite: true
+          debug: true
 
       - name: Build on server
         uses: appleboy/ssh-action@v1.1.0
