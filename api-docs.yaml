@@ -1,0 +1,40 @@
+openapi: 3.0.0
+info:
+  title: Dummy API
+  description: A dummy API for demonstration purposes
+  version: 1.0.0
+servers:
+  - url: https://dummyapi.example.com/api/v1
+paths:
+  /example:
+    get:
+      summary: Get example data
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExampleResponse'
+                
+components:
+  schemas:
+    ExampleResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataItem'
+    DataItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Sample Name"
+        value:
+          type: string
+          example: "Sample Value"
