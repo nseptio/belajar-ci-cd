@@ -5,10 +5,66 @@ info:
   description: API untuk mengelola pertanyaan dalam sebuah section.
 
 servers:
-  # Added by API Auto Mocking Plugin
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/ROBERTBENYAMIN_1/indonesian_student_survey/1.0.0
   - url: https://api.example.com
+    description: Production server
+
+components:
+  schemas:
+    Question:
+      type: object
+      properties:
+        section_id:
+          type: string
+          example: 605c72d2b4f1a46a638b4567
+        question_number:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: "What is your favorite food?"
+        type:
+          type: string
+          enum: [text_answer, multiple_answer]
+          example: text_answer
+        is_required:
+          type: boolean
+          example: true
+        list_of_options:
+          type: array
+          items:
+            type: string
+          example: ["Option 1", "Option 2"]
+    
+    Section:
+      type: object
+      properties:
+        section_number:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: "Demographic Information"
+        description:
+          type: string
+          example: "Questions related to demographics"
+        survey_id:
+          type: string
+          example: 605c72d2b4f1a46a638b1234
+
+  responses:
+    QuestionResponse:
+      description: A question object
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Question'
+
+    SectionResponse:
+      description: A section object
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Section'
 
 paths:
   /questions:
@@ -17,81 +73,19 @@ paths:
       tags:
         - Questions
       requestBody:
-        description: Data untuk membuat pertanyaan baru
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                section_id:
-                  type: string
-                  example: 605c72d2b4f1a46a638b4567
-                question_number:
-                  type: integer
-                  example: 1
-                title:
-                  type: string
-                  example: "What is your favorite food?"
-                type:
-                  type: string
-                  enum: [text_answer, multiple_answer]
-                  example: text_answer
-                is_required:
-                  type: boolean
-                  example: true
-                list_of_options:
-                  type: array
-                  items:
-                    type: string
-                  example: ["Option 1", "Option 2"]
+              $ref: '#/components/schemas/Question'
       responses:
         '201':
           description: Question created successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      section_id:
-                        type: string
-                      question_number:
-                        type: integer
-                      title:
-                        type: string
-                      type:
-                        type: string
-                      is_required:
-                        type: boolean
-                      list_of_options:
-                        type: array
-                        items:
-                          type: string
+          $ref: '#/components/responses/QuestionResponse'
         '400':
           description: Invalid input
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
         '500':
           description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
 
   /questions/{id}:
     get:
@@ -102,48 +96,13 @@ paths:
         - name: id
           in: path
           required: true
-          description: ID of the question
           schema:
             type: string
-            example: 605c72d2b4f1a46a638b4567
       responses:
         '200':
-          description: Question retrieved successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      section_id:
-                        type: string
-                      question_number:
-                        type: integer
-                      title:
-                        type: string
-                      type:
-                        type: string
-                      is_required:
-                        type: boolean
-                      list_of_options:
-                        type: array
-                        items:
-                          type: string
+          $ref: '#/components/responses/QuestionResponse'
         '404':
           description: Question not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
 
     put:
       summary: Update a question by ID
@@ -153,86 +112,22 @@ paths:
         - name: id
           in: path
           required: true
-          description: ID of the question
           schema:
             type: string
-            example: 605c72d2b4f1a46a638b4567
       requestBody:
-        description: Data untuk memperbarui pertanyaan
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                section_id:
-                  type: string
-                  example: 605c72d2b4f1a46a638b4567
-                question_number:
-                  type: integer
-                  example: 1
-                title:
-                  type: string
-                  example: "What is your name?"
-                type:
-                  type: string
-                  enum: [text_answer, multiple_answer]
-                  example: text_answer
-                is_required:
-                  type: boolean
-                  example: true
-                list_of_options:
-                  type: array
-                  items:
-                    type: string
-                  example: ["Option 1", "Option 2"]
+              $ref: '#/components/schemas/Question'
       responses:
         '200':
           description: Question updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      section_id:
-                        type: string
-                      question_number:
-                        type: integer
-                      title:
-                        type: string
-                      type:
-                        type: string
-                      is_required:
-                        type: boolean
-                      list_of_options:
-                        type: array
-                        items:
-                          type: string
+          $ref: '#/components/responses/QuestionResponse'
         '400':
           description: Invalid input
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
         '404':
           description: Question not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
 
     delete:
       summary: Delete a question by ID
@@ -242,136 +137,33 @@ paths:
         - name: id
           in: path
           required: true
-          description: ID of the question
           schema:
             type: string
-            example: 605c72d2b4f1a46a638b4567
       responses:
         '200':
           description: Question deleted successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
         '404':
           description: Question not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
 
-  
   /sections:
     post:
       summary: Create a new section
       tags:
         - Sections
       requestBody:
-        description: Data untuk membuat section baru
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                section_number:
-                  type: integer
-                  example: 1
-                title:
-                  type: string
-                  example: "Demographic Information"
-                description:
-                  type: string
-                  example: "Questions related to demographics"
-                survey_id:
-                  type: string
-                  example: 605c72d2b4f1a46a638b1234
+              $ref: '#/components/schemas/Section'
       responses:
         '201':
           description: Section created successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      section_number:
-                        type: integer
-                      title:
-                        type: string
-                      description:
-                        type: string
-                      survey_id:
-                        type: string
+          $ref: '#/components/responses/SectionResponse'
         '400':
           description: Invalid input
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
         '500':
           description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-
-    get:
-      summary: Get all sections
-      tags:
-        - Sections
-      responses:
-        '200':
-          description: Sections retrieved successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                        section_number:
-                          type: integer
-                        title:
-                          type: string
-                        description:
-                          type: string
-                        survey_id:
-                          type: string
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
 
   /sections/{id}:
     get:
@@ -382,42 +174,13 @@ paths:
         - name: id
           in: path
           required: true
-          description: ID of the section
           schema:
             type: string
-            example: 605c72d2b4f1a46a638b4567
       responses:
         '200':
-          description: Section retrieved successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      section_number:
-                        type: integer
-                      title:
-                        type: string
-                      description:
-                        type: string
-                      survey_id:
-                        type: string
+          $ref: '#/components/responses/SectionResponse'
         '404':
           description: Section not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
 
     put:
       summary: Update a section by ID
@@ -427,71 +190,22 @@ paths:
         - name: id
           in: path
           required: true
-          description: ID of the section
           schema:
             type: string
-            example: 605c72d2b4f1a46a638b4567
       requestBody:
-        description: Data untuk memperbarui section
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                section_number:
-                  type: integer
-                  example: 2
-                title:
-                  type: string
-                  example: "Updated Section Title"
-                description:
-                  type: string
-                  example: "Updated description"
-                survey_id:
-                  type: string
-                  example: 605c72d2b4f1a46a638b1234
+              $ref: '#/components/schemas/Section'
       responses:
         '200':
           description: Section updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      section_number:
-                        type: integer
-                      title:
-                        type: string
-                      description:
-                        type: string
-                      survey_id:
-                        type: string
+          $ref: '#/components/responses/SectionResponse'
         '400':
           description: Invalid input
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
         '404':
           description: Section not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
 
     delete:
       summary: Delete a section by ID
@@ -501,126 +215,10 @@ paths:
         - name: id
           in: path
           required: true
-          description: ID of the section
           schema:
             type: string
-            example: 605c72d2b4f1a46a638b4567
       responses:
         '200':
           description: Section deleted successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
         '404':
           description: Section not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-  /sections/{section_id}/questions:
-    get:
-      summary: Get all questions by Section ID
-      tags:
-        - Sections
-      parameters:
-        - name: section_id
-          in: path
-          required: true
-          description: Section ID
-          schema:
-            type: string
-            example: 605c72d2b4f1a46a638b4567
-      responses:
-        '200':
-          description: Questions retrieved successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                        section_id:
-                          type: string
-                        question_number:
-                          type: integer
-                        title:
-                          type: string
-                        type:
-                          type: string
-                        is_required:
-                          type: boolean
-                        list_of_options:
-                          type: array
-                          items:
-                            type: string
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-  /surveys/{survey_id}/sections:
-    get:
-      summary: Get all sections by Survey ID
-      tags:
-        - Surveys
-      parameters:
-        - name: survey_id
-          in: path
-          required: true
-          description: ID of the survey
-          schema:
-            type: string
-            example: 605c72d2b4f1a46a638b1234
-      responses:
-        '200':
-          description: Sections retrieved successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                        section_number:
-                          type: integer
-                        title:
-                          type: string
-                        description:
-                          type: string
-                        survey_id:
-                          type: string
-        '404':
-          description: Sections not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
