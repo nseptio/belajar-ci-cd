@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Indonesian Student Survey API
   version: 1.0.0
-  description: | -
+  description: |-
     API untuk mengelola survey mahasiswa di Indonesia. API ini memungkinkan pengguna untuk membuat, mengedit, dan menghapus pertanyaan, section, dan survey. Pengguna juga dapat melihat daftar pertanyaan, section, dan survey yang tersedia.
 
     Note: API ini hanya dapat diakses dengan menggunakan VPN Dikti.
