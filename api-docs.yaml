@@ -1,12 +1,18 @@
 openapi: 3.0.0
 info:
-  title: Question API
+  title: Indonesian Student Survey API
   version: 1.0.0
-  description: API untuk mengelola pertanyaan dalam sebuah section.
+  description: | -
+    API untuk mengelola survey mahasiswa di Indonesia. API ini memungkinkan pengguna untuk membuat, mengedit, dan menghapus pertanyaan, section, dan survey. Pengguna juga dapat melihat daftar pertanyaan, section, dan survey yang tersedia.
+
+    Note: API ini hanya dapat diakses dengan menggunakan VPN Dikti.
 
 servers:
   - url: http://10.1.99.206/api/v1/
+<<<<<<< HEAD
     description: Staging server, make sure to use Dikti VPN to access this server
+=======
+>>>>>>> be5dc72 (test update api docs)
 
 tags:
   - name: Questions
