@@ -5,65 +5,142 @@ info:
   description: API untuk mengelola pertanyaan dalam sebuah section.
 
 servers:
-  - url: https://api.example.com
-    description: Production server
+  - url: http://my-be-api/api/v1/
 
 components:
   schemas:
     Question:
       type: object
       properties:
+        id:
+          type: string
         section_id:
           type: string
-          example: 605c72d2b4f1a46a638b4567
         question_number:
           type: integer
-          example: 1
         title:
           type: string
-          example: "What is your favorite food?"
         type:
           type: string
           enum: [text_answer, multiple_answer]
-          example: text_answer
         is_required:
           type: boolean
-          example: true
         list_of_options:
           type: array
           items:
             type: string
-          example: ["Option 1", "Option 2"]
-    
+      example:
+        id: "605c72d2b4f1a46a638b4567"
+        section_id: "605c72d2b4f1a46a638b4567"
+        question_number: 1
+        title: "What is your favorite food?"
+        type: "text_answer"
+        is_required: true
+        list_of_options: ["Option 1", "Option 2"]
+
     Section:
+      type: object
+      properties:
+        id:
+          type: string
+        section_number:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        survey_id:
+          type: string
+      example:
+        id: "605c72d2b4f1a46a638b1234"
+        section_number: 1
+        title: "Demographic Information"
+        description: "Questions related to demographics"
+        survey_id: "605c72d2b4f1a46a638b1234"
+
+    CreateQuestionRequest:
+      type: object
+      properties:
+        section_id:
+          type: string
+        question_number:
+          type: integer
+        title:
+          type: string
+        type:
+          type: string
+          enum: [text_answer, multiple_answer]
+        is_required:
+          type: boolean
+        list_of_options:
+          type: array
+          items:
+            type: string
+      example:
+        section_id: "605c72d2b4f1a46a638b4567"
+        question_number: 1
+        title: "What is your favorite food?"
+        type: "text_answer"
+        is_required: true
+        list_of_options: ["Option 1", "Option 2"]
+
+    CreateSectionRequest:
       type: object
       properties:
         section_number:
           type: integer
-          example: 1
         title:
           type: string
-          example: "Demographic Information"
         description:
           type: string
-          example: "Questions related to demographics"
         survey_id:
           type: string
-          example: 605c72d2b4f1a46a638b1234
+      example:
+        section_number: 1
+        title: "Demographic Information"
+        description: "Questions related to demographics"
+        survey_id: "605c72d2b4f1a46a638b1234"
 
-  responses:
+    ResponseMessage:
+      type: object
+      properties:
+        message:
+          type: string
+
     QuestionResponse:
-      description: A question object
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Question'
+      type: object
+      properties:
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/Question'
 
     SectionResponse:
-      description: A section object
-      content:
-        application/json:
-          schema:
+      type: object
+      properties:
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/Section'
+
+    QuestionsArrayResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+
+    SectionsArrayResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        data:
+          type: array
+          items:
             $ref: '#/components/schemas/Section'
 
 paths:
@@ -73,19 +150,31 @@ paths:
       tags:
         - Questions
       requestBody:
+        description: Data untuk membuat pertanyaan baru
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Question'
+              $ref: '#/components/schemas/CreateQuestionRequest'
       responses:
         '201':
           description: Question created successfully
-          $ref: '#/components/responses/QuestionResponse'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionResponse'
         '400':
           description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
 
   /questions/{id}:
     get:
@@ -96,13 +185,23 @@ paths:
         - name: id
           in: path
           required: true
+          description: ID of the question
           schema:
             type: string
+            example: 605c72d2b4f1a46a638b4567
       responses:
         '200':
-          $ref: '#/components/responses/QuestionResponse'
+          description: Question retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionResponse'
         '404':
           description: Question not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
 
     put:
       summary: Update a question by ID
@@ -112,22 +211,36 @@ paths:
         - name: id
           in: path
           required: true
+          description: ID of the question
           schema:
             type: string
+            example: 605c72d2b4f1a46a638b4567
       requestBody:
+        description: Data untuk memperbarui pertanyaan
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Question'
+              $ref: '#/components/schemas/CreateQuestionRequest'
       responses:
         '200':
           description: Question updated successfully
-          $ref: '#/components/responses/QuestionResponse'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionResponse'
         '400':
           description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
         '404':
           description: Question not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
 
     delete:
       summary: Delete a question by ID
@@ -137,13 +250,23 @@ paths:
         - name: id
           in: path
           required: true
+          description: ID of the question
           schema:
             type: string
+            example: 605c72d2b4f1a46a638b4567
       responses:
         '200':
           description: Question deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
         '404':
           description: Question not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
 
   /sections:
     post:
@@ -151,19 +274,49 @@ paths:
       tags:
         - Sections
       requestBody:
+        description: Data untuk membuat section baru
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Section'
+              $ref: '#/components/schemas/CreateSectionRequest'
       responses:
         '201':
           description: Section created successfully
-          $ref: '#/components/responses/SectionResponse'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SectionResponse'
         '400':
           description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+
+    get:
+      summary: Get all sections
+      tags:
+        - Sections
+      responses:
+        '200':
+          description: Sections retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SectionsArrayResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
 
   /sections/{id}:
     get:
@@ -174,13 +327,23 @@ paths:
         - name: id
           in: path
           required: true
+          description: ID of the section
           schema:
             type: string
+            example: 605c72d2b4f1a46a638b4567
       responses:
         '200':
-          $ref: '#/components/responses/SectionResponse'
+          description: Section retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SectionResponse'
         '404':
           description: Section not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
 
     put:
       summary: Update a section by ID
@@ -190,22 +353,36 @@ paths:
         - name: id
           in: path
           required: true
+          description: ID of the section
           schema:
             type: string
+            example: 605c72d2b4f1a46a638b4567
       requestBody:
+        description: Data untuk memperbarui section
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Section'
+              $ref: '#/components/schemas/CreateSectionRequest'
       responses:
         '200':
           description: Section updated successfully
-          $ref: '#/components/responses/SectionResponse'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SectionResponse'
         '400':
           description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
         '404':
           description: Section not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
 
     delete:
       summary: Delete a section by ID
@@ -215,10 +392,20 @@ paths:
         - name: id
           in: path
           required: true
+          description: ID of the section
           schema:
             type: string
+            example: 605c72d2b4f1a46a638b4567
       responses:
         '200':
           description: Section deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
         '404':
           description: Section not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
