@@ -9,10 +9,7 @@ info:
 
 servers:
   - url: http://10.1.99.206/api/v1/
-<<<<<<< HEAD
     description: Staging server, make sure to use Dikti VPN to access this server
-=======
->>>>>>> be5dc72 (test update api docs)
 
 tags:
   - name: Questions
