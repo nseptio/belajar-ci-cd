@@ -5,7 +5,22 @@ info:
   description: API untuk mengelola pertanyaan dalam sebuah section.
 
 servers:
-  - url: http://my-be-api/api/v1/
+  - url: http://10.1.99.206/api/v1/
+    description: Staging server, make sure to use Dikti VPN to access this server
+
+tags:
+  - name: Questions
+    description: API untuk mengelola pertanyaan
+  - name: Sections
+    description: API untuk mengelola section
+  - name: Surveys
+    description: API untuk mengelola survey
+  - name: Students
+    description: API untuk mengelola mahasiswa
+  - name: staffs
+    description: API untuk mengelola staff
+  - name: admin
+    description: API untuk mengelola admin
 
 components:
   schemas:
@@ -54,6 +69,29 @@ components:
           type: string
           example: 605c72d2b4f1a46a638b1234
 
+    Survey:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+          example: "Survey 1"
+        description:
+          type: string
+          example: "Survey for last-year students"
+        start_date:
+          type: string
+          format: date
+          example: "2025-03-25T00:00:00.000Z"
+        end_date:
+          type: string
+          format: date
+          example: "2025-03-30T00:00:00.000Z"
+        is_published:
+          type: boolean
+          example: true
+
     MessageResponse:
       type: object
       properties:
@@ -70,6 +108,11 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Section'
+
+    SurveyListResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/Survey'
 
 paths:
   /questions:
@@ -383,3 +426,184 @@ paths:
                 $ref: '#/components/schemas/MessageResponse'
               example:
                 message: "Section with the given ID not found"
+
+  /surveys:
+    post:
+      summary: Create a new survey
+      tags:
+        - Surveys
+      requestBody:
+        description: Data untuk membuat survey baru
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Survey'
+      responses:
+        '201':
+          description: Survey created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Survey created successfully"
+                  data:
+                    $ref: '#/components/schemas/Survey'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Invalid input: missing required fields"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Failed to create the survey due to server error"
+    get:
+      summary: Get all surveys
+      tags:
+        - Surveys
+      responses:
+        '200':
+          description: Surveys retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SurveyListResponse'
+        '404':
+          description: Surveys not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "No surveys found"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Failed to retrieve surveys due to server error"
+  /surveys/{id}:
+    get:
+      summary: Get a survey by ID
+      tags:
+        - Surveys
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the survey
+          schema:
+            type: string
+            example: 605c72d2b4f1a46a638b4567
+      responses:
+        '200':
+          description: Survey retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Survey retrieved successfully"
+                  data:
+                    $ref: '#/components/schemas/Survey'
+        '404':
+          description: Survey not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Survey with the given ID not found"
+
+    put:
+      summary: Update a survey by ID
+      tags:
+        - Surveys
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the survey
+          schema:
+            type: string
+            example: 605c72d2b4f1a46a638b4567
+      requestBody:
+        description: Data untuk memperbarui survey
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Survey'
+      responses:
+        '200':
+          description: Survey updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Survey updated successfully"
+                  data:
+                    $ref: '#/components/schemas/Survey'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Invalid input: data validation failed"
+        '404':
+          description: Survey not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Survey with the given ID not found"
+    delete:
+      summary: Delete a survey by ID
+      tags:
+        - Surveys
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the survey
+          schema:
+            type: string
+            example: 605c72d2b4f1a46a638b4567
+      responses:
+        '200':
+          description: Survey deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Survey deleted successfully"
+        '404':
+          description: Survey not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Survey with the given ID not found"
