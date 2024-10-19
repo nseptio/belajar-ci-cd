@@ -69,7 +69,7 @@ jobs:
         with:
           doc: learn-bumb
           token: ${{secrets.BUMP_TOKEN}}
-          file: doc/api-documentation.yaml
+          file: api-docs.yaml
           command: diff
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
