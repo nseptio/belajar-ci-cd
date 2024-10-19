@@ -16,27 +16,25 @@ components:
           type: string
         section_id:
           type: string
+          example: 605c72d2b4f1a46a638b4567
         question_number:
           type: integer
+          example: 1
         title:
           type: string
+          example: "What is your favorite food?"
         type:
           type: string
           enum: [text_answer, multiple_answer]
+          example: text_answer
         is_required:
           type: boolean
+          example: true
         list_of_options:
           type: array
           items:
             type: string
-      example:
-        id: "605c72d2b4f1a46a638b4567"
-        section_id: "605c72d2b4f1a46a638b4567"
-        question_number: 1
-        title: "What is your favorite food?"
-        type: "text_answer"
-        is_required: true
-        list_of_options: ["Option 1", "Option 2"]
+          example: ["Option 1", "Option 2"]
 
     Section:
       type: object
@@ -45,103 +43,33 @@ components:
           type: string
         section_number:
           type: integer
+          example: 1
         title:
           type: string
+          example: "Demographic Information"
         description:
           type: string
+          example: "Questions related to demographics"
         survey_id:
           type: string
-      example:
-        id: "605c72d2b4f1a46a638b1234"
-        section_number: 1
-        title: "Demographic Information"
-        description: "Questions related to demographics"
-        survey_id: "605c72d2b4f1a46a638b1234"
+          example: 605c72d2b4f1a46a638b1234
 
-    CreateQuestionRequest:
-      type: object
-      properties:
-        section_id:
-          type: string
-        question_number:
-          type: integer
-        title:
-          type: string
-        type:
-          type: string
-          enum: [text_answer, multiple_answer]
-        is_required:
-          type: boolean
-        list_of_options:
-          type: array
-          items:
-            type: string
-      example:
-        section_id: "605c72d2b4f1a46a638b4567"
-        question_number: 1
-        title: "What is your favorite food?"
-        type: "text_answer"
-        is_required: true
-        list_of_options: ["Option 1", "Option 2"]
-
-    CreateSectionRequest:
-      type: object
-      properties:
-        section_number:
-          type: integer
-        title:
-          type: string
-        description:
-          type: string
-        survey_id:
-          type: string
-      example:
-        section_number: 1
-        title: "Demographic Information"
-        description: "Questions related to demographics"
-        survey_id: "605c72d2b4f1a46a638b1234"
-
-    ResponseMessage:
+    MessageResponse:
       type: object
       properties:
         message:
           type: string
+          example: "Request processed successfully"
 
-    QuestionResponse:
-      type: object
-      properties:
-        message:
-          type: string
-        data:
-          $ref: '#/components/schemas/Question'
+    QuestionListResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/Question'
 
-    SectionResponse:
-      type: object
-      properties:
-        message:
-          type: string
-        data:
-          $ref: '#/components/schemas/Section'
-
-    QuestionsArrayResponse:
-      type: object
-      properties:
-        message:
-          type: string
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/Question'
-
-    SectionsArrayResponse:
-      type: object
-      properties:
-        message:
-          type: string
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/Section'
+    SectionListResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/Section'
 
 paths:
   /questions:
@@ -155,26 +83,36 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateQuestionRequest'
+              $ref: '#/components/schemas/Question'
       responses:
         '201':
           description: Question created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/QuestionResponse'
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Question created successfully"
+                  data:
+                    $ref: '#/components/schemas/Question'
         '400':
           description: Invalid input
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseMessage'
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Invalid input: missing required fields"
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseMessage'
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Failed to create the question due to server error"
 
   /questions/{id}:
     get:
@@ -195,13 +133,21 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/QuestionResponse'
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Question retrieved successfully"
+                  data:
+                    $ref: '#/components/schemas/Question'
         '404':
           description: Question not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseMessage'
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Question with the given ID not found"
 
     put:
       summary: Update a question by ID
@@ -221,26 +167,36 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateQuestionRequest'
+              $ref: '#/components/schemas/Question'
       responses:
         '200':
           description: Question updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/QuestionResponse'
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Question updated successfully"
+                  data:
+                    $ref: '#/components/schemas/Question'
         '400':
           description: Invalid input
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseMessage'
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Invalid input: data validation failed"
         '404':
           description: Question not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseMessage'
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Question with the given ID not found"
 
     delete:
       summary: Delete a question by ID
@@ -260,13 +216,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseMessage'
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Question deleted successfully"
         '404':
           description: Question not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseMessage'
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Question with the given ID not found"
 
   /sections:
     post:
@@ -279,44 +239,36 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateSectionRequest'
+              $ref: '#/components/schemas/Section'
       responses:
         '201':
           description: Section created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SectionResponse'
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Section created successfully"
+                  data:
+                    $ref: '#/components/schemas/Section'
         '400':
           description: Invalid input
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseMessage'
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Invalid input: missing required fields"
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseMessage'
-
-    get:
-      summary: Get all sections
-      tags:
-        - Sections
-      responses:
-        '200':
-          description: Sections retrieved successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SectionsArrayResponse'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseMessage'
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Failed to create the section due to server error"
 
   /sections/{id}:
     get:
@@ -337,13 +289,21 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SectionResponse'
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Section retrieved successfully"
+                  data:
+                    $ref: '#/components/schemas/Section'
         '404':
           description: Section not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseMessage'
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Section with the given ID not found"
 
     put:
       summary: Update a section by ID
@@ -363,26 +323,36 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateSectionRequest'
+              $ref: '#/components/schemas/Section'
       responses:
         '200':
           description: Section updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SectionResponse'
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Section updated successfully"
+                  data:
+                    $ref: '#/components/schemas/Section'
         '400':
           description: Invalid input
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseMessage'
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Invalid input: data validation failed"
         '404':
           description: Section not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseMessage'
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Section with the given ID not found"
 
     delete:
       summary: Delete a section by ID
@@ -402,10 +372,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseMessage'
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Section deleted successfully"
         '404':
           description: Section not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseMessage'
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Section with the given ID not found"
